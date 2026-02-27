@@ -3889,3 +3889,135 @@ https://stepik.org/lesson/2022461/step/8?unit=2050884
 #             raise InsufficientFundsError("Недостаточно денег на счету!")
 #         self.balance -= amount
 #         return self.balance
+
+
+"""
+https://stepik.org/lesson/2022462/step/1?auth=login&unit=2050885
+! Финальная практическая задача: "Банковский Счет"
+"""
+# from dataclasses import dataclass
+
+
+# class AccountError(Exception):
+#     pass
+
+
+# class TransactionError(AccountError):
+#     pass
+
+
+# @dataclass(frozen=True)
+# class Transaction:
+#     amount: float  # сумма транзакции, может быть положительной или отрицательной
+#     description: str  # (описание транзакции)
+
+
+# class Account:
+#     def __init__(self, owner: str, initial_balance: float = 0.0) -> None:
+#         self.owner = owner
+#         self._initial_balance = initial_balance
+#         self._transactions = []
+
+#     @property
+#     def balance(self):
+#         return self._initial_balance + sum(item.amount for item in self._transactions)
+
+#     def add_transaction(self, transaction: Transaction):
+#         if self.balance + transaction.amount < 0:
+#             raise TransactionError("Транзакция невозможна: недостаточно средств.")
+#         if isinstance(transaction, Transaction):
+#             self._transactions.append(transaction)
+
+#     @classmethod
+#     def from_csv(cls, csv_string: str):
+#         """Принимает строку csv_string в формате "ИмяВладельца,НачальныйБаланс".
+
+#         Args:
+#             csv_string (str): например "Иван,1000.50"
+#         """
+#         owner, initial_balace = csv_string.split(",")
+#         return cls(owner, float(initial_balace))
+
+#     def __len__(self):
+#         return len(self._transactions)
+
+#     def __str__(self) -> str:
+#         return f"Счет {self.owner}"
+
+#     def __repr__(self) -> str:
+#         return f"{self.__class__.__name__}(owner={self.owner!r}, initial_balance={self.balance})"
+
+
+# acc = Account("Иван", 100)
+# acc.add_transaction(Transaction(50, "Пополнение"))
+
+# # acc.balance теперь должен быть 150
+# print(acc.balance)
+
+# # len(acc) должен быть 1
+# print(len(acc))
+
+# acc.add_transaction(Transaction(-200, "Покупка"))  # -> вызовет TransactionError
+
+
+"""
+https://stepik.org/lesson/2022462/step/2?auth=login&unit=2050885
+# ! Финальная практическая задача №2 : "Корзина Покупок в Интернет-Магазине"
+"""
+# from dataclasses import dataclass
+
+
+# class StockError(Exception):
+#     pass
+
+
+# @dataclass(frozen=True)
+# class Product:
+#     name: str
+#     price: float
+#     stock: int = 0
+
+
+# class ShoppingCart:
+#     def __init__(self) -> None:
+#         self._items = []
+
+#     def add_product(self, product: Product):
+#         if product.stock == 0:
+#             raise StockError(f"Товар '{product.name}' отсутствует на складе.")
+#         if product.stock > 0:
+#             self._items.append(product)
+
+#     @property
+#     def total_price(self):
+#         return sum([item.price for item in self._items])
+
+#     @classmethod
+#     def from_products(cls, product_list: list):
+#         obj = cls()
+#         for product in product_list:
+#             obj.add_product(product)
+#         return obj
+
+#     def __len__(self):
+#         """Должен возвращать общее количество товаров в корзине."""
+#         return len(self._items)
+
+#     def __str__(self):
+#         return f"В вашей корзине {len(self)} товаров на сумму {self.total_price:.2f} руб."
+
+
+# cart = ShoppingCart()
+# cart.add_product(Product("apple", 100, 1))
+# print(cart)
+
+# some = cart.from_products([Product("apple", 100, 1)])
+# print(some)
+
+
+"""
+https://stepik.org/lesson/2022462/step/3?auth=login&unit=2050885
+! Финальная практическая задача №3: "Система Логирования"
+"""
+
+
