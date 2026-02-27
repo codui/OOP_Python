@@ -3497,4 +3497,86 @@ https://stepik.org/lesson/2026658/step/9?auth=login&unit=2055134
 """
 https://stepik.org/lesson/2022461/step/1?auth=login&unit=2050884
 ! 5.1 Создание собственных исключений
+
+! Преимущества собственных исключений:
+- Семантическая ясность:
+    InsufficientFundsError гораздо лучше описывает суть проблемы, чем ValueError.
+    Ваш код становится самодокументируемым.
+
+- Точная обработка ошибок:
+    Вы можете писать отдельные блоки except для каждого конкретного типа ошибки, не анализируя текстовые сообщения.
+
+- Создание иерархии ошибок:
+    Вы можете построить целое "дерево" ошибок (об этом в следующих шагах), что позволяет ловить как конкретные ошибки,
+    так и целые их группы.
+
+- Разделение ответственности:
+    Ваш API или библиотека может предоставить пользователю набор своих собственных исключений,
+    и ему не придется гадать, какие ValueError или KeyError могут "вылететь" из вашего кода.
 """
+
+
+# class Account:
+#     id_list = []
+
+#     def __init__(self, money: int | float = 0) -> None:
+#         self.balance = money
+#         self.is_locked = False
+#         self.id = hex(id(self))
+#         self.id_list.append(self.id)
+
+#     def __repr__(self) -> str:
+#         return f"{self.__class__.__name__} with id {self.id} has data: {self.__dict__}"
+
+#     def set_balance(self, amount_money: int | float):
+#         self.balance += amount_money
+
+#     def withdraw_from_balance(self, amount_money: int | float):
+#         if self.balance is None:
+#             raise ValueError
+#         self.balance -= amount_money
+
+
+# account1 = Account(100)
+# account2 = Account(2000)
+
+
+# # Определяем наши собственные типы ошибок
+# class InsufficientFundsError(Exception):
+#     pass
+
+
+# class AccountLockedError(Exception):
+#     pass
+
+
+# class SelfTransferError(Exception):
+#     pass
+
+
+# def make_payment_v2(from_account, to_account, amount):
+#     if from_account.balance < amount:
+#         raise InsufficientFundsError("Недостаточно средств")
+
+#     if to_account.is_locked:
+#         raise AccountLockedError("Счет получателя заблокирован")
+
+#     if from_account.id == to_account.id:
+#         raise SelfTransferError("Нельзя перевести деньги на тот же счет")
+#     from_account.withdraw_from_balance(amount)
+#     to_account.set_balance(amount)
+
+
+# try:
+#     make_payment_v2(account1, account2, 1000)
+# except InsufficientFundsError:
+#     print("Пожалуйста, пополните баланс.")
+# except AccountLockedError:
+#     print("Операция невозможна. Свяжитесь с поддержкой.")
+# except SelfTransferError:
+#     print("Выберите другой счет для перевода.")
+# except Exception as e:
+#     print(f"Произошла неизвестная ошибка. {e}")
+
+# print(account1)
+# print(account2)
