@@ -3304,6 +3304,50 @@ https://stepik.org/lesson/2022460/step/8?unit=2050883
 #     name: str
 #     members: list[str] = field(default_factory=list)
 
+"""
+https://stepik.org/lesson/2026658/step/1?unit=2055134
+! 4.3 Дескрипторы: __get__, __set__, __delete__
+
+Дескриптор — это любой объект, который реализует хотя бы один из трех специальных методов:
+    __get__, __set__ или __delete__.
+Он позволяет "перехватывать" и настраивать поведение при доступе к атрибутам.
+
+Дескриптор — это не какой-то специальный тип, а просто любой объект, который реализует протокол дескриптора.
+Этот протокол состоит из трех магических методов.
+Классу достаточно реализовать хотя бы один из них, чтобы стать дескриптором.
+
+    ! "Магия" @property — это на самом деле протокол дескриптора.
+
+    ! Декоратор @property — это просто удобный способ создать экземпляр класса property,
+! который является встроенным дескриптором.
+
+    ! При обращении к атрибуту, который является дескриптором,
+! Python вызывает его специальный метод __get__ вместо того, чтобы просто вернуть значение атрибута.
+"""
+
+
+"""
+https://stepik.org/lesson/2026658/step/2?unit=2055134
+! 2: Протокол дескриптора: объяснение __get__, __set__ и __delete__
+"""
+
+
+# class GetDescriptor:
+#     def __get__(self, instance, owner):
+#         print("Вызван __get__:")
+#         print(f"  - self:     {self}")
+#         print(f"  - instance: {instance}")
+#         print(f"  - owner:    {owner}")
+#         return "Значение из __get__"
+
+
+# class Owner:
+#     attr = GetDescriptor()
+
+
+# obj = Owner()
+# print(f"Результат obj.attr: {obj.attr}")
+
 
 """
 https://stepik.org/lesson/2026658/step/5?auth=login&unit=2055134
@@ -3448,3 +3492,9 @@ https://stepik.org/lesson/2026658/step/9?auth=login&unit=2055134
 # obj = Some()
 # obj.attr = "Python"
 # print(f"{obj.attr=}")
+
+
+"""
+https://stepik.org/lesson/2022461/step/1?auth=login&unit=2050884
+! 5.1 Создание собственных исключений
+"""
