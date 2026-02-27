@@ -3448,5 +3448,3 @@ https://stepik.org/lesson/2026658/step/9?auth=login&unit=2055134
 # obj = Some()
 # obj.attr = "Python"
 # print(f"{obj.attr=}")
-
-print("Hello, Terminalor!")
