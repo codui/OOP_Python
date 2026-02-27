@@ -3579,3 +3579,313 @@ https://stepik.org/lesson/2022461/step/1?auth=login&unit=2050884
 
 # print(account1)
 # print(account2)
+
+
+"""
+https://stepik.org/lesson/2022461/step/2?unit=2050884
+! Создание иерархии классов исключений
+
+    ! Пример: Иерархия ошибок для веб-приложения
+    Спроектируем "дерево" ошибок:
+- Корень: MyAppError — базовое исключение для всех ошибок нашего приложения.
+- Ветви: ApiError и DatabaseError — группы ошибок, связанные с API и базой данных. Они наследуются от MyAppError.
+- Листья: AuthError и NotFoundError — очень конкретные ошибки API. Они наследуются от ApiError.
+"""
+
+
+# # --- Уровень 0: Базовое исключение для всего приложения ---
+# class MyAppError(Exception):
+#     """Общий предок для всех исключений нашего приложения."""
+
+#     pass
+
+
+# # --- Уровень 1: Группы ошибок ---
+# class ApiError(MyAppError):
+#     """Ошибка, связанная с внешним API."""
+
+#     pass
+
+
+# class DatabaseError(MyAppError):
+#     """Ошибка, связанная с базой данных."""
+
+#     pass
+
+
+# # --- Уровень 2: Конкретные, специфичные ошибки ---
+# class AuthError(ApiError):
+#     """Ошибка аутентификации в API (например, неверный токен)."""
+
+#     pass
+
+
+# class NotFoundError(ApiError):
+#     """Ошибка, когда ресурс в API не найден (404)."""
+
+#     pass
+
+
+# def get_data_from_api(token):
+#     if token == "invalid":
+#         raise AuthError("Неверный API токен")
+#     if token == "not_found":
+#         raise NotFoundError("Пользователь не найден")
+#     if token == "db_fail":
+#         raise DatabaseError("База данных недоступна")
+#     return {"data": "some data"}
+
+
+"""
+Пример 1
+"""
+# # ! Здесь реагируем только на AuthError.
+# # ! Если функция выбросит NotFoundError, этот блок except его не поймает.
+# try:
+#     get_data_from_api("invalid")
+# except AuthError:
+#     print("Проблема с аутентификацией. Пожалуйста, перелогиньтесь.")
+
+
+"""
+Пример 2
+"""
+# # ! Ловим целую группу ошибок, связанную с API
+# # ! Здесь не нужно писать except (AuthError, NotFoundError, ...):.
+# # ! Просто ловим их общего предка.
+# try:
+#     # get_data_from_api("invalid")  # Сработает
+#     get_data_from_api("not_found")  # Тоже сработает
+# except ApiError as e:
+#     # Этот блок поймает и AuthError, и NotFoundError,
+#     # потому что они ОБА являются потомками ApiError!
+#     print(f"Произошла ошибка API: {e}. Попробуйте позже.")
+
+
+"""
+! Пример 3 - правильный порядок обработки:
+Except блоки проверяются по порядку.
+Всегда нужно ловить более специфичные исключения раньше, чем их родительские.
+"""
+
+
+# try:
+#     get_data_from_api("invalid")
+# except AuthError:
+#     # Этот блок сработает первым, потому что он более конкретный
+#     print("Ошибка аутентификации. Обновите ваш токен.")
+# except ApiError:
+#     # ! Этот блок НЕ сработает, хотя AuthError и является ApiError
+#     print("Произошла общая ошибка API.")
+#     # ! Если AuthError и ApiError поменять местами, except ApiError: поймал бы AuthError первым,
+#     # ! и более специфичный блок никогда бы не выполнился.
+
+
+"""
+https://stepik.org/lesson/2022461/step/3?unit=2050884
+! Использование raise для генерации собственных ошибок в методах
+"""
+
+
+# class WalletError(Exception):
+#     """Базовое исключение для всех ошибок кошелька."""
+
+#     pass
+
+
+# class InsufficientFundsError(WalletError):
+#     """Выбрасывается, когда на счете недостаточно средств."""
+
+#     pass
+
+
+# class NegativeAmountError(WalletError):
+#     """Выбрасывается при попытке операции с отрицательной суммой."""
+
+#     pass
+
+
+# class Wallet:
+#     def __init__(self, balance):
+#         self._balance = balance
+
+#     @property
+#     def balance(self):
+#         return self._balance
+
+#     def deposit(self, amount):
+#         """Положить деньги на счет."""
+#         if amount <= 0:
+#             # Если сумма не корректна, генерируем исключение
+#             raise NegativeAmountError("Сумма для пополнения должна быть положительной.")
+#         self._balance += amount
+#         print(f"Счет пополнен на {amount}. Баланс: {self._balance}")
+
+#     def withdraw(self, amount):
+#         """Снять деньги со счета."""
+#         if amount <= 0:
+#             # Снова проверить корректность суммы
+#             raise NegativeAmountError("Сумма для снятия должна быть положительной.")
+
+#         if self._balance < amount:
+#             # Если денег не хватает, генерируется другое исключение
+#             raise InsufficientFundsError(
+#                 f"Недостаточно средств. Запрошено: {amount}, доступно: {self._balance}"
+#             )
+
+#         self._balance -= amount
+#         print(f"Снято со счета {amount}. Баланс: {self._balance}")
+
+
+# my_wallet = Wallet(100)
+
+# try:
+#     print("--- Попытка снять 50 ---")
+#     my_wallet.withdraw(50)  # Успешно
+
+#     print("\n--- Попытка снять 200 ---")
+#     my_wallet.withdraw(200)  # InsufficientFundsError
+
+#     print("\n--- Этот код не выполнится ---")
+
+# except NegativeAmountError as e:
+#     # Этот блок не сработает, т.к. ошибка другого типа
+#     print(f"Перехвачена ошибка некорректной суммы: {e}")
+
+# except InsufficientFundsError as e:
+#     # А вот этот блок сработает!
+#     print(f"Перехвачена ошибка нехватки средств: {e}")
+#     print("Пожалуйста, пополните ваш кошелек.")
+
+# except WalletError as e:
+#     # Этот блок поймал бы любую из наших ошибок, если бы мы не поймали ее раньше
+#     print(f"Произошла общая ошибка кошелька: {e}")
+
+# finally:
+#     # Этот блок выполнится в любом случае
+#     print(f"\nОперация завершена. Итоговый баланс: {my_wallet.balance}")
+
+
+"""
+https://stepik.org/lesson/2022461/step/4?unit=2050884
+! Задача 1: Создание простого исключения
+"""
+
+
+# class MyCustomError(Exception):
+#     pass
+
+
+# def cause_error():
+#     raise MyCustomError
+
+
+# cause_error()
+
+
+"""
+https://stepik.org/lesson/2022461/step/5?unit=2050884
+! Задача 2: Исключение с сообщением
+"""
+
+
+# class InvalidDataError(Exception):
+#     pass
+
+
+# def process_data(data):
+#     if type(data) is not dict:
+#         raise InvalidDataError("Данные должны быть словарем")
+
+
+# process_data([])
+
+
+"""
+https://stepik.org/lesson/2022461/step/6?unit=2050884
+! Задача 3: Иерархия исключений
+"""
+
+
+# class ApiError(Exception):
+#     pass
+
+
+# class AuthError(ApiError):
+#     pass
+
+
+# class TimeoutError(ApiError):
+#     pass
+
+
+# def make_request(should_fail_with: str):
+#     if should_fail_with == "auth":
+#         raise AuthError("Ошибка авторизации!")
+#     if should_fail_with == "timeout":
+#         raise TimeoutError("Ошибка истечения времени")
+#     if type(should_fail_with) is str or should_fail_with is None:
+#         pass
+
+
+# make_request("auth")
+# make_request("timeout")
+# make_request("")
+
+
+"""
+https://stepik.org/lesson/2022461/step/7?unit=2050884
+! Задача 4: Использование raise в методе класса
+"""
+
+
+# class InvalidAgeError(ValueError):
+#     pass
+
+
+# class Person:
+#     def __init__(self, name, age) -> None:
+#         self.name = name
+#         self.age = age
+
+#     @property
+#     def age(self):
+#         return self._age
+
+#     @age.setter
+#     def age(self, new_age):
+#         if new_age < 0:
+#             raise InvalidAgeError("Возраст не может быть отрицательным")
+#         self._age = new_age
+
+
+"""
+https://stepik.org/lesson/2022461/step/8?unit=2050884
+! Задача 5: Практический пример "Банкомат"
+"""
+
+
+# class AtmError(Exception):
+#     pass
+
+
+# class InsufficientFundsError(AtmError):
+#     pass
+
+
+# class InvalidPinError(AtmError):
+#     pass
+
+
+# class ATM:
+#     def __init__(self, balance, pin) -> None:
+#         self.balance = balance
+#         self.pin = pin
+
+#     def withdraw(self, amount, entered_pin):
+#         if entered_pin != self.pin:
+#             raise InvalidPinError("Вы ввели не верный пин-код!")
+#         if amount > self.balance:
+#             raise InsufficientFundsError("Недостаточно денег на счету!")
+#         self.balance -= amount
+#         return self.balance
