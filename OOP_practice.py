@@ -4019,5 +4019,44 @@ https://stepik.org/lesson/2022462/step/2?auth=login&unit=2050885
 https://stepik.org/lesson/2022462/step/3?auth=login&unit=2050885
 ! Финальная практическая задача №3: "Система Логирования"
 """
+from abc import ABC, abstractmethod
+from datetime import datetime
 
 
+class Handler(ABC):
+    @abstractmethod
+    def emit(self, message: str):
+        pass
+
+
+class ConsoleHandler(Handler):
+    def emit(self, message: str):
+        print(message)
+
+
+class FileHandler(Handler):
+    def emit(self, message: str):
+        return f"Запись в файл: {message}"
+
+
+class TimeMixin:
+    """Добавляет возможность предварять сообщение временной меткой"""
+
+    def format_with_timestamp(self, message: str):
+        return f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [{message}]"
+
+
+class Logger(TimeMixin):
+    def __init__(self, handlers: list) -> None:
+        self._handlers = handlers
+
+    def log(self, message: str):
+        formatted_message = self.format_with_timestamp(message)
+        for handler in self._handlers:
+            handler.emit(formatted_message)
+
+    def __call__(self, message: str):
+        return self.log(message)
+
+
+# ! Ошибка: Метод format_with_timestamp в TimeMixin возвращает неверный формат. Ожидается '[ДАТА ВРЕМЯ] [test]'.
